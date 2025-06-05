@@ -33,15 +33,8 @@ cp configs/proxycannon-client.conf ~/proxycannon-client.conf
 mkdir /etc/openvpn/ccd
 make-cadir /etc/openvpn/easy-rsa
 cd /etc/openvpn/easy-rsa/
-###  ln -s openssl-1.0.0.cnf openssl.cnf ####
 ln -s /usr/share/easy-rsa/* ./
 mkdir keys
-. /etc/openvpn/easy-rsa/vars
-### commented ### ./clean-all
-### commented ### /etc/openvpn/easy-rsa/pkitool --initca
-### commented ### /etc/openvpn/easy-rsa/pkitool --server server
-### commented ### /usr/bin/openssl dhparam -out /etc/openvpn/easy-rsa/keys/dh2048.pem 2048
-###  commented ### openvpn --genkey --secret /etc/openvpn/easy-rsa/keys/ta.key
 ./easyrsa init-pki
 ./easyrsa build-ca nopass
 ./easyrsa gen-req server nopass
@@ -71,20 +64,20 @@ sed -i "s/REMOTE_PUB_IP/$EIP/" ~/proxycannon-client.conf
 # setup networking #
 ####################
 # setup routing and forwarding
-sysctl -w net.ipv4.ip_forward=1
+#sysctl -w net.ipv4.ip_forward=1
 
 # use L4 (src ip, src dport, dest ip, dport) hashing for load balancing instead of L3 (src ip ,dst ip)
 #echo 1 > /proc/sys/net/ipv4/fib_multipath_hash_policy
-sysctl -w net.ipv4.fib_multipath_hash_policy=1
+#sysctl -w net.ipv4.fib_multipath_hash_policy=1
 
 # setup a second routing table
-echo "50        loadb" >> /etc/iproute2/rt_tables
+#echo "50        loadb" >> /etc/iproute2/rt_tables
 
 # set rule for openvpn client source network to use the second routing table
-ip rule add from 10.10.10.0/24 table loadb
+#ip rule add from 10.10.10.0/24 table loadb
 
 # always snat from eth0
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+#iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 ############################
 # post install instructions
